@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 
 <html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title> AutoRich-TTS </title>
+<title> ComfyVoice </title>
 <meta name="generator" content="Jekyll v3.9.5">
-<meta property="og:title" content="AutoRich-TTS">
+<meta property="og:title" content="ComfyVoice">
 <meta property="og:locale" content="en_US">
-<!--<meta name="description" content="This is a demo for our paper ‘AutoRich-TTS’">-->
-<!--<meta property="og:description" content="This is a demo for our paper ‘AutoRich-TTS’">-->
-<link rel="canonical" href="https://github.com/ivy-1911/ivy-1911.github.io">
-<meta property="og:url" content="https://github.com/ivy-1911/ivy-1911.github.io">
+<!--<meta name="description" content="This is a demo for our paper ‘ComfyVoice’">-->
+<!--<meta property="og:description" content="This is a demo for our paper ‘ComfyVoice’">-->
+
 <meta property="og:site_name" content="demo">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
-<meta property="twitter:title" content="AutoRich-TTS">
-<!--<script type="application/ld+json">-->
-<!--{"@context":"https://schema.org","@type":"WebSite","description":"This is a demo for our paper ‘AutoRich-TTS’","headline":"AutoRich-TTS","name":"demo","url":"https://github.com/ivy-1911/ivy-1911.github.io"}</script>-->
-<!-- End Jekyll SEO tag -->
+<meta property="twitter:title" content="ComfyVoice">
+
 
     <link rel="preconnect" href="https://fonts.gstatic.com/">
     <link rel="preload" href="./CSS/css" as="style" type="text/css" crossorigin="">
@@ -39,33 +37,26 @@
 
   </head>
   <body>
-    <a id="skip-to-content" href="https://github.com/ivy-1911/ivy-1911.github.io#content">Skip to the content.</a>
-
 
     <header class="page-header" role="banner">
       <h1 class="project-name">Towards User-Friendly Expressive Speech Generation with Automatic Prompt Enrichment</h1>
 <!--      <h2 class="project-tagline">This is a demo for our paper</h2>-->
-<!--       <a href="https://github.com/ivy-1911/ivy-1911.github.io" class="btn">View on GitHub</a>-->
+
     </header>
 
 
 <main id="content" class="main-content" role="main">
 
 <!-- Introduction -->
-<h1 id="name"><center> AutoRich-TTS </center></h1>
+<h1 id="name"><center> ComfyVoice </center></h1>
 <h2 id="abstract">Abstract</h2>
     <p>
-    Text-prompted Text-To-Speech has emerged as a novel paradigm, which using text descriptions as speaking style prompts to guide speech synthesis.
-    However, achieving optimal control demands exhaustive fine-grained style descriptions. This necessity imposes significant burden on users, where inadequate or coarse inputs often result in degraded synthesis quality.
-    To address this, we propose AutoRich-TTS, a two-stage framework automatically enriches user simple prompts into fine-grained descriptions.
-    Specifically, the first stage extrapolates contextual information to extend implicit style cues.
-    The second stage generates richer style descriptions from coarse inputs and inferred context, enhancing both stylistic detail and expressiveness. Finally autoregressive speech language model synthesizes speech conditioned on refined prompts.
-    Both subjective and objective evaluations demonstrate that our approach effectively bridges the gap between user inputs and high-quality acoustic realization.
+    Recent Prompt-TTS methods enhance speech stylization via incorporating textual style prompts to compensate for missing non-verbal paralinguistic information. In practice, however, user-provided style prompts are typically simplistic combinations of stylistic attributes with insufficient acoustic detail, while the underlying causal motivation of the style prompt acting on the target utterance is overlooked. This information asymmetry between concise user inputs and expected highly expressive speech outputs leads to severe semantic-style gap and degraded synthesis performance. To address these limitations, we propose ComfyVoice, a heuristic prompt enrichment framework for highly expressive speech synthesis. Specifically, we introduce a Context-Extrapolator that infers semantically coherent contextual content, uncovering implicit stylistic cues and situational knowledge missing from the user prompt. Subsequently, we finetune a Prompt-Enricher on a context-driven chain-of-thought dataset to generate detailed style descriptions tailored to both the contextual scenario and target style, effectively alleviating the semantic-style mismatch in direct prompt rewriting. Finally, to further narrow the gap between semantic adherence and acoustic realization, we optimize ComfyVoice by Group Relative Policy Optimization with a dynamic reward curriculum that initially prioritizes semantic fidelity, then progressively shifting to style prompt following capability. Extensive objective and subjective evaluations demonstrate that ComfyVoice effectively bridges the gap between user style prompts and high-quality acoustic generation, achieving superior stylistic expressiveness with minimal interaction effort.
     </p>
 
 <h2 id="Methodology">Methodology</h2>
-<center><img src="./Image/ICME.png" width="100%" height="100%"></center>
-<center>Overall Architecture of AutoRich-TTS</center>
+<center><img src="./Image/overview_2027.png" width="100%" height="100%"></center>
+<center>Our proposed ComfyVoice framework</center>
 
 
 
@@ -76,404 +67,372 @@
 
 <p>
   Our method enables the LLM to infer implicit context information and intent from the input text, dynamically adjusting the style of synthesized speech.
-  Specifically, we use the LLM to generate Extrapolated Context surrounding sentences that encompass the topic and scenario of the Input Text.
-  Then, a Coarse-grained Style Description serves as initial guidance, which combined with Extrapolated Context, helps generate Fine-grained Style Description with greater nuance and expressiveness.
-  Finally, we pass the Extrapolated Context and the Input Text through the Context Compression module to obtain the Paragraph-level Semantic Prompt, which is combined with the Fine-grained Style Description to guide the TTS model to output expressive speech that meets user expectations.
+  Specifically, we use the Context-Extrapolator to generate Extrapolated Context surrounding sentences that encompass the scenario of the input text.
+  Then Prompt-Enricher helps generate Fine-grained Style Description with greater nuance and expressiveness, which user coarse style description serves as initial guidance combined with extrapolated context.
 </p>
 
+<center><img src="./Image/wordcloud.png" width="100%" height="100%"></center>
+<center>Refined style prompt word cloud</center>
+<p><br /></p>
+
+<b>Example of Refined Style Description:</b>
+    <p><br /></p>
 <table>
 	<thead>
 		<tr>
 			<th style="text-align: center">Text</th>
-			<th style="text-align: center">Previous Text</th>
-			<th style="text-align: center">Following Text</th>
-			<th style="text-align: center">Coarse-grained Description</th>
-            <th style="text-align: center">Fine-grained Description</th>
+			<th style="text-align: center">Context Text</th>
+			<th style="text-align: center">Original Style Description</th>
+            <th style="text-align: center">Refined Style Description</th>
 
 		</tr>
 	</thead>
 	<tbody>
         <tr>
-			<td id="1165_135220_000009_000003">
-                While sight thus failed me, sound was equally unavailing, for it was always the same--a sustained and unintermittent roar, a low, droning sound, deep and terrible, with no variations of dashing breakers or rushing rapids or falling cataracts.
+			<td id="">
+                I'll have a scoop of that exotic purple and turquoise sherbet.
 			<td style="font-size: xx-small;">
-            The silence had been broken only by the endless roar of the storm. ||
-			I could feel the wind, but no sound came through the thick fog. ||
-            The world around me was still, yet the roar beneath it never ceased. ||
-            No birds sang, no leaves rustled—just the constant, deep growl. ||
-            Even the distant thunder seemed to fade into that one unchanging roar.
-            </td>
-
-			<td style="font-size: xx-small;">
-            It was as if the mountain itself was breathing in that low, endless hum. ||
-            I wondered if the earth was cracking open beneath the sound's weight. ||
-            It didn’t feel like a storm—it felt like something older, deeper. ||
-			The roar seemed to vibrate through my bones, steady and unyielding. ||
-            I couldn’t tell if it was coming from the valley or from inside my mind.
+            The vibrant lights of the carnival spun in a dizzying blur as I stood before the towering ice cream cart, my heart pounding with an electric anticipation that seemed to vibrate through my very bones. I leaned forward, eyes wide and fixed on the swirling colors, and declared with a breathless intensity, I'll have a scoop of that exotic purple and turquoise sherbet. The vendor smiled warmly, scooping the frozen delight with a flourish that matched my own soaring excitement, ready to serve up a moment of pure, unadulterated joy.
             </td>
 
             <td>
-                A calm, upbeat adult male speaks with clear enthusiasm and focus.
+                The speaker's high-pitched voice resonated with slow, deliberate speech, exuding energy.
             </td>
-			<td>
-			    With enthusiasm and passion, a calm adult male with normal pitch and normal volume speaks at a normal speed, conveying.
+			<td style="font-size: xx-small;">
+			    The delivery features a girlish, high-pitched tone that remains surprisingly steady and deliberate, contrasting the chaotic surroundings. She enunciates with crisp clarity, slowing down to savor the flavor of the words, while her volume pulses with an underlying electric charge. The intonation rises sharply on "turquoise," painting a sonic picture of the vibrant colors, ending the sentence on a note of breathless, triumphant joy.
             </td>
 		</tr>
 
-		<tr>
-			<td id="1463_134465_000029_000009">
-            	The dangerous thing about it was that it said nothing and apparently did nothing.
-            </td>
+        <tr>
+			<td id="">
+                His superiors had also preached this saying it was the way for eternal honor.
 			<td style="font-size: xx-small;">
-			That's stupid—no warning, no action, just silence! ||
-            It's a trap! No signals, no response—pure danger! ||
-            Zero signs of life? That's not safe at all! ||
-            Silent and inactive? That’s the worst kind of threat! ||
-            No sound, no movement—how can that be safe?
-            </td>
-
-			<td style="font-size: xx-small;">
-			 You’d better stay away from it, it’s a dead end! ||
-             Don’t touch it—something’s always watching! ||
-             It just waits… and that’s when it strikes! ||
-             I saw it move last night—don’t trust it! ||
-             No reaction means it’s already planning something!
-            </td>
+                The scornful speaker's voice was charged with energy, the pace moderate.	He leaned forward, his eyes narrowing as he dissected the empty rhetoric of the court. The room fell silent, waiting for his verdict on their grand illusions. His superiors had also preached this saying it was the way for eternal honor, yet he saw only the rot beneath the gilded surface, a farce played out for the amusement of the masses.	            </td>
 
             <td>
-                Young teen speaks quickly and disapprovingly, emphasizing danger with sharpness.
+                The scornful speaker's voice was charged with energy, the pace moderate.
             </td>
-
-			<td>
-			Speaking with disgust in an audiobook, a fast-paced teenager with normal pitch and normal volume addresses the topic of danger, stating with disapproval.
-            </td>
-
+			<td style="font-size: xx-small;">
+                A mature male baritone, speaking with a rhythmic, almost staccato cadence that feels charged with suppressed anger. The pitch remains steady but gains a metallic edge, highlighting the irony in the text. Volume is controlled yet intense, with a slight breathy quality before snapping into clarity on the final verdict, conveying a sense of cold, calculated judgment rather than hot rage.            </td>
 		</tr>
 
-		<tr>
-			<td id="2053_138888_000044_000000">
-           But he might probably have got over the annoyance of this feeling had he not been overwhelmed by a consciousness that everything was going badly with him.
-            </td>
-
+        <tr>
+			<td id="">
+                I lent George three pounds.
 			<td style="font-size: xx-small;">
-			I bet he just ignored it, totally forgot it ever happened! ||
-            Whoa, that sounds so intense—like a storm in his head! ||
-            Man, he’s been so stressed, no wonder he’s losing it! ||
-            Honestly, he’s been spiraling—can’t believe he didn’t snap! ||
-            Totally messed up—like his mind just short-circuited!
-            </td>
-
-			<td style="font-size: xx-small;">
-			Maybe he just needs a break and some fresh air!	||
-            I think he’ll feel better once he talks to someone! ||
-            Hey, what if he starts journaling to clear his head? ||
-            He’s probably just tired—give him a little time! ||
-            Let’s help him find what’s really bothering him!
-            </td>
+                The rain tapped a relentless rhythm against the windowpane as I stared at the empty ledger, the weight of our shared decline pressing down on my chest. I lent George three pounds, a desperate act of charity that only deepened the chasm between us, knowing full well he would never repay the debt of our friendship.	            </td>
 
             <td>
-                A vibrant teenage girl speaks with energy and enthusiasm
+                The mournful speaker's voice, though slow and low in energy, had an unexpectedly high pitch.
             </td>
-
-			<td>
-			Engaging in honest conversation, a teenage female with a normal pitch and high volume speaks at a normal speed, expressing a thought-provoking idea with integrity.
-            </td>
+			<td style="font-size: xx-small;">
+                The narrator's voice is aged and husky, moving at a glacial pace with minimal force. Surprisingly, the pitch stays elevated and brittle, giving the words a ghostly, ethereal edge. The volume is consistently low, like a confession in the dark, while the intonation rises subtly, highlighting the tragic futility of the three pounds lent.            </td>
 		</tr>
 
-		<tr>
-			<td id="2709_158074_000036_000001">
-            	And so the hearing passed in something of a verbal riot, but with no doubt as to the fact that Congressmen were alarmed by the prospect of women voting as a protest group.
-            </td>
 
-            <td style="font-size: xx-small;">
-			The debate started with sharp questions and quick exchanges. ||
-            Women’s voices were finally heard, though not without tension. ||
-            A heated exchange followed, but clarity emerged from the chaos. ||
-            Opponents raised concerns, but the facts stood firm. ||
-            The floor was crowded, but the core issue remained clear.
-            </td>
-
-			<td style="font-size: xx-small;">
-			Many saw it as a turning point for democratic participation. ||
-            It sparked conversations that would last for years. ||
-            Women began organizing more openly in the months ahead. ||
-            The outcome inspired future movements across the nation. ||
-            Change, though slow, was beginning to take root.
-            </td>
-
-            <td>
-                A youthful woman speaks calmly and clearly, balanced and neutral in tone.
-            </td>
-
-            <td>
-			A natural-sounding young female with normal pitch and normal volume discusses a passing hearing.  This speech takes place in a News and Politics setting, presenting the natural emotion evident throughout.
-            </td>
-		</tr>
-
-		<tr>
-			<td id="2775_160958_000029_000000">
-				So the merchant sat down as bold as you please, and made a very hearty supper, after which he again thought he would look for the master of the house.
-            </td>
-
-			<td style="font-size: xx-small;">
-			Whoa, imagine that! The merchant just sat down with a grin and a full plate! ||
-            Ooh, he was so bold, like a superhero showing up at a party! ||
-            He didn’t even wait—just plopped down and started eating like a king! ||
-            Bold move! He sat down like he owned the place already! ||
-            No wait—bold as a lion, he just claimed the seat with a big smile!
-            </td>
-
-			<td style="font-size: xx-small;">
-			Then he spotted the master hiding behind the curtain! ||
-            The master peeked out, eyes wide with surprise!	||
-            He whispered, 'You’re not supposed to be here!' in a hushed tone! ||
-            The merchant laughed, 'I’m just here to have fun!' and kept eating!	||
-            The house went silent—everyone watching the drama unfold!
-            </td>
-
-            <td>
-                Energetic, lively teenage girl telling a joyful story with excitement.
-            </td>
-			<td>
-			Sharing a story, a fast-talking teenage girl with a high pitch and normal volume sits down at the table and says.
-            </td>
-		</tr>
 
 
 	</tbody>
 </table>
 <p><br /></p>
 
-<h2 id="compare-with-baselines">Comparison of AutoRich-TTS and Baseline TTS Systems</h2>
-<p align="justify">We provide a range of audio samples to exemplify the differences between AutoRich-TTS and the baseline models (PromptTTS、ParlerTTS、VoxInstruct、CosyVoice) over multiple style attributes (Age、 Gender、 Pitch、 Speed、 Volume、 Emotion).</p>
-
+<h2 id="compare-with-baselines">Comparison of ComfyVoice and Baseline Prompt-TTS Systems</h2>
+<p align="justify">We provide a range of speech samples to exemplify the performance between ComfyVoice and the baseline models (PromptTTS、ParlerTTS、VoxInstruct、CosyVoice、Qwen3-TTS、MOSS-TTS) over different style prompt.</p>
 
 
 <p>
-<b>Input Text:</b> It was arranged neatly, and by its side flowed the clear, cool waters of Young's Branch, a tributary of the little Manassas River. He walked briskly, crossed the brook, stepping from stone to stone, and entered the grounds of the Invincibles.<br />
-<b>Style Prompt:</b> Exuding naturalness in an aged male voice with normal pitch and high volume, a speaker speaks at a normal pace.<br />
-<b>Ground Truth:</b><audio controls="" id="8494_244443_000047_000002" onplay="pauseOthers(this);"><source src="./Audio/GroundTruth/269.wav" type="audio/mpeg" /></audio>
+<b>Input Text:</b>They'd never know I'd regular ran away. <br />
+<b>Original Style Description:</b>A delighted speaker's low-energy demeanor is reflected in speaker's slow-paced speech and normal pitch. <br />
+<b>Refined Style Description:</b>This is a gentle, mid-range vocal performance delivered by an adult with a relaxed posture. The articulation is clear but slow, matching the slow motion of dust motes dancing in the sun. The speaker maintains a soft, hushed volume and a level pitch that occasionally dips slightly, evoking a sense of cozy, private happiness without any dramatic emotional spikes. <br />
+
 </p>
 <table>
     <tr>
         <th> PromptTTS</th>
         <th> ParlerTTS</th>
         <th> VoxInstruct</th>
-        <th> CosyVoice</th>
-        <th> AutoRich-TTS(Ours)</th>
+
     </tr>
     <tr>
-        <th> <audio controls="" id="269" onplay="pauseOthers(this);"><source src="./Audio/PromptTTS/269.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="269" onplay="pauseOthers(this);"><source src="./Audio/ParlerTTS/269.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="269" onplay="pauseOthers(this);"><source src="./Audio/VoxInstruct/269.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="269" onplay="pauseOthers(this);"><source src="./Audio/CosyVoice/269.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="269" onplay="pauseOthers(this);"><source src="./Audio/AutoRichTTS/269.wav" type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="000" onplay="pauseOthers(this);"><source src="./Speech/PromptTTS/000.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="000" onplay="pauseOthers(this);"><source src="./Speech/ParlerTTS/000.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="000" onplay="pauseOthers(this);"><source src="./Speech/VoxInstruct/000.wav"  type="audio/mpeg" /></audio> </th>
     </tr>
+
+     <tr>
+         <th> CosyVoice</th>
+         <th> Qwen3-TTS</th>
+         <th> MOSS-TTS</th>
+         <th> ComfyVoice(Ours)</th>
+    </tr>
+    <tr>
+        <th> <audio controls="" id="000" onplay="pauseOthers(this);"><source src="./Speech/CosyVoice/000.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="000" onplay="pauseOthers(this);"><source src="./Speech/Qwen3-TTS/000.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="000" onplay="pauseOthers(this);"><source src="./Speech/MOSS-TTS/000.wav"     type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="000" onplay="pauseOthers(this);"><source src="./Speech/ComfyVoice/000.wav"   type="audio/mpeg" /></audio> </th>
+    </tr>
+
 </table>
 
+<!-- -->
+
 <p>
-<b>Input Text:</b> I can promise you, too, some good singing.<br />
-<b>Style Prompt:</b> With a hint of urgency in her voice, a natural adult female with a normal pitch and low volume says, in a fast-paced manner.<br />
-<b>Ground Truth:</b><audio controls="" id="7754_108640_000005_000005" onplay="pauseOthers(this);"><source src="./Audio/GroundTruth/244.wav" type="audio/mpeg" /></audio>
+<b>Input Text:</b>Sam waved his arm vaguely. <br />
+<b>Original Style Description:</b>The astonished speaker's speech was deliberate, with a high pitch and low energy. <br />
+<b>Refined Style Description:</b>The voice emerges as a high, trembling whisper, delivered with painstaking slowness and minimal energy. The intonation lacks stability, dipping and rising with a hollow resonance that mirrors his shock. He speaks with a detached vagueness, his low-volume utterances barely piercing the silence, embodying the sheer magnitude of the disbelief washing over him. <br />
+
 </p>
 <table>
     <tr>
         <th> PromptTTS</th>
         <th> ParlerTTS</th>
         <th> VoxInstruct</th>
-        <th> CosyVoice</th>
-        <th> AutoRich-TTS(Ours)</th>
+
     </tr>
     <tr>
-        <th> <audio controls="" id="244" onplay="pauseOthers(this);"><source src="./Audio/PromptTTS/244.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="244" onplay="pauseOthers(this);"><source src="./Audio/ParlerTTS/244.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="244" onplay="pauseOthers(this);"><source src="./Audio/VoxInstruct/244.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="244" onplay="pauseOthers(this);"><source src="./Audio/CosyVoice/244.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="244" onplay="pauseOthers(this);"><source src="./Audio/AutoRichTTS/244.wav" type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="025" onplay="pauseOthers(this);"><source src="./Speech/PromptTTS/025.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="025" onplay="pauseOthers(this);"><source src="./Speech/ParlerTTS/025.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="025" onplay="pauseOthers(this);"><source src="./Speech/VoxInstruct/025.wav"  type="audio/mpeg" /></audio> </th>
     </tr>
+
+     <tr>
+         <th> CosyVoice</th>
+         <th> Qwen3-TTS</th>
+         <th> MOSS-TTS</th>
+         <th> ComfyVoice(Ours)</th>
+    </tr>
+    <tr>
+        <th> <audio controls="" id="025" onplay="pauseOthers(this);"><source src="./Speech/CosyVoice/025.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="025" onplay="pauseOthers(this);"><source src="./Speech/Qwen3-TTS/025.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="025" onplay="pauseOthers(this);"><source src="./Speech/MOSS-TTS/025.wav"     type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="025" onplay="pauseOthers(this);"><source src="./Speech/ComfyVoice/025.wav"   type="audio/mpeg" /></audio> </th>
+    </tr>
+
 </table>
 
+<!-- -->
+
 <p>
-<b>Input Text:</b> Of course, it was commonly known that Benda was being sought by Universities and corporations: I know personally of several tempting offers he had received.<br />
-<b>Style Prompt:</b> Reflecting a sense of naturalism, a young female with high pitch and volume artfully expresses,  She speaks at a normal speed with an air of unexpected surprise.<br />
-<b>Ground Truth:</b><audio controls="" id="3994_11512_000014_000000" onplay="pauseOthers(this);"><source src="./Audio/GroundTruth/123.wav" type="audio/mpeg" /></audio>
+<b>Input Text:</b>No the man was not drunk he wondered how he got tied up with this stranger. <br />
+<b>Original Style Description:</b>The speaker, a furious speaker, employs unhurried speech with a hint of normal energy. <br />
+<b>Refined Style Description:</b>With a hint of normal energy, the voice unfolds the sentence slowly, dragging out syllables to heighten tension. The tone is flat and resonant, neither whispering nor projecting, keeping the volume steady. A barely perceptible upward inflection lands on "stranger," cutting through the monotony to reveal a sharp, cold realization that underscores the speaker's intense, unhurried wrath. <br />
+
 </p>
 <table>
     <tr>
         <th> PromptTTS</th>
         <th> ParlerTTS</th>
         <th> VoxInstruct</th>
-        <th> CosyVoice</th>
-        <th> AutoRich-TTS(Ours)</th>
+
     </tr>
     <tr>
-        <th> <audio controls="" id="123" onplay="pauseOthers(this);"><source src="./Audio/PromptTTS/123.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="123" onplay="pauseOthers(this);"><source src="./Audio/ParlerTTS/123.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="123" onplay="pauseOthers(this);"><source src="./Audio/VoxInstruct/123.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="123" onplay="pauseOthers(this);"><source src="./Audio/CosyVoice/123.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="123" onplay="pauseOthers(this);"><source src="./Audio/AutoRichTTS/123.wav" type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="031" onplay="pauseOthers(this);"><source src="./Speech/PromptTTS/031.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="031" onplay="pauseOthers(this);"><source src="./Speech/ParlerTTS/031.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="031" onplay="pauseOthers(this);"><source src="./Speech/VoxInstruct/031.wav"  type="audio/mpeg" /></audio> </th>
     </tr>
+
+     <tr>
+         <th> CosyVoice</th>
+         <th> Qwen3-TTS</th>
+         <th> MOSS-TTS</th>
+         <th> ComfyVoice(Ours)</th>
+    </tr>
+    <tr>
+        <th> <audio controls="" id="031" onplay="pauseOthers(this);"><source src="./Speech/CosyVoice/031.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="031" onplay="pauseOthers(this);"><source src="./Speech/Qwen3-TTS/031.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="031" onplay="pauseOthers(this);"><source src="./Speech/MOSS-TTS/031.wav"     type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="031" onplay="pauseOthers(this);"><source src="./Speech/ComfyVoice/031.wav"   type="audio/mpeg" /></audio> </th>
+    </tr>
+
 </table>
 
+<!-- -->
+
+
 <p>
-<b>Input Text:</b> The subject matter has been carefully chosen, and the author has wisely refrained from giving advice with regard to treatment which can be satisfactorily directed only after careful study by a physician.<br />
-<b>Style Prompt:</b> Expressing natural emotions, a youthful female with high pitch and normal volume speaks rapidly.<br />
-<b>Ground Truth:</b><audio controls="" id="1195_37134_000006_000002" onplay="pauseOthers(this);"><source src="./Audio/GroundTruth/005.wav" type="audio/mpeg" /></audio>
+<b>Input Text:</b>She had your dark suit in greasy wash water all year.	<br />
+<b>Original Style Description:</b>Speaking at a leisurely pace, speaker's enraged voice held a consistent high pitch. <br />
+<b>Refined Style Description:</b>With a leisurely, almost hypnotic rhythm, the speaker unleashes a high-pitched, furious scream that holds steady intensity. Her voice is loud and piercing, vibrating the very floorboards, as she drags out the words to maximize the horror of the accusation, keeping the pitch consistently elevated throughout the entire phrase. <br />
+
 </p>
 <table>
     <tr>
         <th> PromptTTS</th>
         <th> ParlerTTS</th>
         <th> VoxInstruct</th>
-        <th> CosyVoice</th>
-        <th> AutoRich-TTS(Ours)</th>
+
     </tr>
     <tr>
-        <th> <audio controls="" id="5" onplay="pauseOthers(this);"><source src="./Audio/PromptTTS/005.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="5" onplay="pauseOthers(this);"><source src="./Audio/ParlerTTS/005.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="5" onplay="pauseOthers(this);"><source src="./Audio/VoxInstruct/005.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="5" onplay="pauseOthers(this);"><source src="./Audio/CosyVoice/005.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="5" onplay="pauseOthers(this);"><source src="./Audio/AutoRichTTS/005.wav" type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="042" onplay="pauseOthers(this);"><source src="./Speech/PromptTTS/042.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="042" onplay="pauseOthers(this);"><source src="./Speech/ParlerTTS/042.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="042" onplay="pauseOthers(this);"><source src="./Speech/VoxInstruct/042.wav"  type="audio/mpeg" /></audio> </th>
     </tr>
+
+     <tr>
+         <th> CosyVoice</th>
+         <th> Qwen3-TTS</th>
+         <th> MOSS-TTS</th>
+         <th> ComfyVoice(Ours)</th>
+    </tr>
+    <tr>
+        <th> <audio controls="" id="042" onplay="pauseOthers(this);"><source src="./Speech/CosyVoice/042.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="042" onplay="pauseOthers(this);"><source src="./Speech/Qwen3-TTS/042.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="042" onplay="pauseOthers(this);"><source src="./Speech/MOSS-TTS/042.wav"     type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="042" onplay="pauseOthers(this);"><source src="./Speech/ComfyVoice/042.wav"   type="audio/mpeg" /></audio> </th>
+    </tr>
+
 </table>
 
+<!-- -->
+
+
 <p>
-<b>Input Text:</b> In civil commotions of this kind occurring in any of the ancient non-Protestant countries in Europe, it is always a question of the utmost moment which side the Church and the clergy espouse.<br />
-<b>Style Prompt:</b> In a natural tone, an old male with normal pitch and loud volume speaks slowly and expresses his thoughts.<br />
-<b>Ground Truth:</b><audio controls="" id="1226_141268_000010_000000" onplay="pauseOthers(this);"><source src="./Audio/GroundTruth/006.wav" type="audio/mpeg" /></audio>
+<b>Input Text:</b>Victor discussed the iron and the moth today. <br />
+<b>Original Style Description:</b>The speaker addresses others, speaking with speaker's deep voice in a regular rhythm and normal energy levels. <br />
+<b>Refined Style Description:</b>A deep, authoritative yet gentle male voice speaks with a measured, rhythmic cadence. The volume is moderate, projecting clarity without shouting, and the pitch stays low throughout. Emotional coloring is subtle, conveying a sense of wonder and seriousness through a steady, unwavering tone that emphasizes the ancient mystery of the trapped moth within the cold steel. <br />
+
 </p>
 <table>
     <tr>
         <th> PromptTTS</th>
         <th> ParlerTTS</th>
         <th> VoxInstruct</th>
-        <th> CosyVoice</th>
-        <th> AutoRich-TTS(Ours)</th>
+
     </tr>
     <tr>
-        <th> <audio controls="" id="6" onplay="pauseOthers(this);"><source src="./Audio/PromptTTS/006.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="6" onplay="pauseOthers(this);"><source src="./Audio/ParlerTTS/006.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="6" onplay="pauseOthers(this);"><source src="./Audio/VoxInstruct/006.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="6" onplay="pauseOthers(this);"><source src="./Audio/CosyVoice/006.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="6" onplay="pauseOthers(this);"><source src="./Audio/AutoRichTTS/006.wav" type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="069" onplay="pauseOthers(this);"><source src="./Speech/PromptTTS/069.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="069" onplay="pauseOthers(this);"><source src="./Speech/ParlerTTS/069.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="069" onplay="pauseOthers(this);"><source src="./Speech/VoxInstruct/069.wav"  type="audio/mpeg" /></audio> </th>
     </tr>
+
+     <tr>
+         <th> CosyVoice</th>
+         <th> Qwen3-TTS</th>
+         <th> MOSS-TTS</th>
+         <th> ComfyVoice(Ours)</th>
+    </tr>
+    <tr>
+        <th> <audio controls="" id="069" onplay="pauseOthers(this);"><source src="./Speech/CosyVoice/069.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="069" onplay="pauseOthers(this);"><source src="./Speech/Qwen3-TTS/069.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="069" onplay="pauseOthers(this);"><source src="./Speech/MOSS-TTS/069.wav"     type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="069" onplay="pauseOthers(this);"><source src="./Speech/ComfyVoice/069.wav"   type="audio/mpeg" /></audio> </th>
+    </tr>
+
 </table>
 
+<!-- -->
+
 <p>
-<b>Input Text:</b> Princess Mary was silent.<br />
-<b>Style Prompt:</b> Reflecting on the silent Princess Mary, a teenage girl with low-pitched and low-volume voice spoke rapidly, expressing natural emotions.<br />
-<b>Ground Truth:</b><audio controls="" id="4592_22178_000033_000003" onplay="pauseOthers(this);"><source src="./Audio/GroundTruth/139.wav" type="audio/mpeg" /></audio>
+<b>Input Text:</b>Clear are your eyes and bright your breath! <br />
+<b>Original Style Description:</b>A astonished speaker's treble voice is accompanied by normal speech speed. <br />
+<b>Refined Style Description:</b>A delicate, high-pitched female tone cuts through the air, marked by a sudden intake of breath. The volume is dynamic, starting low and expanding to a bright, crystalline clarity. Intonation features a distinct upward inflection on "eyes" and a soaring, open contour on "breath." The speech rate transitions from a startled quickness to a deliberate, reverent normality, highlighting the sacred return of light. <br />
+
 </p>
 <table>
     <tr>
         <th> PromptTTS</th>
         <th> ParlerTTS</th>
         <th> VoxInstruct</th>
-        <th> CosyVoice</th>
-        <th> AutoRich-TTS(Ours)</th>
+
     </tr>
     <tr>
-        <th> <audio controls="" id="139" onplay="pauseOthers(this);"><source src="./Audio/PromptTTS/139.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="139" onplay="pauseOthers(this);"><source src="./Audio/ParlerTTS/139.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="139" onplay="pauseOthers(this);"><source src="./Audio/VoxInstruct/139.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="139" onplay="pauseOthers(this);"><source src="./Audio/CosyVoice/139.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="139" onplay="pauseOthers(this);"><source src="./Audio/AutoRichTTS/139.wav" type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="071" onplay="pauseOthers(this);"><source src="./Speech/PromptTTS/071.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="071" onplay="pauseOthers(this);"><source src="./Speech/ParlerTTS/071.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="071" onplay="pauseOthers(this);"><source src="./Speech/VoxInstruct/071.wav"  type="audio/mpeg" /></audio> </th>
     </tr>
+
+     <tr>
+         <th> CosyVoice</th>
+         <th> Qwen3-TTS</th>
+         <th> MOSS-TTS</th>
+         <th> ComfyVoice(Ours)</th>
+    </tr>
+    <tr>
+        <th> <audio controls="" id="071" onplay="pauseOthers(this);"><source src="./Speech/CosyVoice/071.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="071" onplay="pauseOthers(this);"><source src="./Speech/Qwen3-TTS/071.wav"    type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="071" onplay="pauseOthers(this);"><source src="./Speech/MOSS-TTS/071.wav"     type="audio/mpeg" /></audio> </th>
+        <th> <audio controls="" id="071" onplay="pauseOthers(this);"><source src="./Speech/ComfyVoice/071.wav"   type="audio/mpeg" /></audio> </th>
+    </tr>
+
 </table>
 
-<p>
-<b>Input Text:</b> That he died in 1788, without leaving any legitimate offspring, is a fact equally well known; as also that his brother Henry Stuart, Cardinal York, who died in 1807, was the last of his ill-fated race.<br />
-<b>Style Prompt:</b> With a natural tone, a low-pitched adult male speaks in a slow and slow pace.  he says in a low-pitched voice, indicating the passing of a beloved figure.<br />
-<b>Ground Truth:</b><audio controls="" id="5319_84357_000002_000001" onplay="pauseOthers(this);"><source src="./Audio/GroundTruth/158.wav" type="audio/mpeg" /></audio>
-</p>
-<table>
-    <tr>
-        <th> PromptTTS</th>
-        <th> ParlerTTS</th>
-        <th> VoxInstruct</th>
-        <th> CosyVoice</th>
-        <th> AutoRich-TTS(Ours)</th>
-    </tr>
-    <tr>
-        <th> <audio controls="" id="158" onplay="pauseOthers(this);"><source src="./Audio/PromptTTS/158.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="158" onplay="pauseOthers(this);"><source src="./Audio/ParlerTTS/158.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="158" onplay="pauseOthers(this);"><source src="./Audio/VoxInstruct/158.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="158" onplay="pauseOthers(this);"><source src="./Audio/CosyVoice/158.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="158" onplay="pauseOthers(this);"><source src="./Audio/AutoRichTTS/158.wav" type="audio/mpeg" /></audio> </th>
-    </tr>
-</table>
-
-<p>
-<b>Input Text:</b> The dangerous thing about it was that it said nothing and apparently did nothing.<br />
-<b>Style Prompt:</b> Speaking with disgust in an audiobook, a fast-paced teenager with normal pitch and normal volume addresses the topic of danger, stating with disapproval.<br />
-<b>Ground Truth:</b><audio controls="" id="1463_134465_000029_000009" onplay="pauseOthers(this);"><source src="./Audio/GroundTruth/012.wav" type="audio/mpeg" /></audio>
-</p>
-<table>
-    <tr>
-        <th> PromptTTS</th>
-        <th> ParlerTTS</th>
-        <th> VoxInstruct</th>
-        <th> CosyVoice</th>
-        <th> AutoRich-TTS(Ours)</th>
-    </tr>
-    <tr>
-        <th> <audio controls="" id="12" onplay="pauseOthers(this);"><source src="./Audio/PromptTTS/012.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="12" onplay="pauseOthers(this);"><source src="./Audio/ParlerTTS/012.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="12" onplay="pauseOthers(this);"><source src="./Audio/VoxInstruct/012.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="12" onplay="pauseOthers(this);"><source src="./Audio/CosyVoice/012.wav" type="audio/mpeg" /></audio> </th>
-        <th> <audio controls="" id="12" onplay="pauseOthers(this);"><source src="./Audio/AutoRichTTS/012.wav" type="audio/mpeg" /></audio> </th>
-    </tr>
-</table>
+<!-- -->
 <p><br /></p>
 
 
-<h2 id="">Ablation Results in different settings of AutoRich-TTS</h2>
+<h2 id="">Ablation Results in Different Settings of ComfyVoice</h2>
 
 <p>
-  We conduct thorough ablation experiments to validate the contributions of different settings of AutoRich-TTS.
-  Where X represents Input Text, 𝐷𝑐 and 𝐷𝑓 represent Coarse-grained and Fine-grained Style Descriptions respectively,
-  𝐶𝑒𝑥𝑡 represent Extrapolated Context, 𝑇𝑆 represent Speech Tokens. The details are as follows:
+  We conduct thorough ablation experiments to validate the contributions of different settings of ComfyVoice.
+
 </p>
 
 
-<p><ruby><strong>The original AutoRich-TTS </strong></ruby></p>
+<p><ruby><strong>The Description of Different Granularities </strong></ruby></p>
 <table>
 	<thead>
 		<tr>
 			<th style="text-align: center">Setting</th>
 			<th style="text-align: center">Text</th>
-			<th style="text-align: center">Fine-grained Style Description</th>
-            <th style="text-align: center">Audio</th>
+			<th style="text-align: center">Style Description</th>
+            <th style="text-align: center">Speech</th>
 
 		</tr>
 	</thead>
 	<tbody>
         <tr>
 			<td style="text-align: center">
-            Ab.0: Full AutoRich-TTS pipeline: The complete system with
-			all components enabled, including context extrapolation,
-			style enrichment, and context compression. Serves as the
-			upper-bound reference.
+            Full ComfyVoice
             </td>
 			<td>
-			I know that; but I cannot be mewed up here in the old house and deprived of my afternoon ride.
+			He owed mister Lawson, I can't tell you how.
             </td>
             <td>
-            A calm teenage girl with high pitch and normal volume, speaking at a fast pace, conveying her natural emotions.
+            The speaker, a mature female with a rich, textured timbre, articulates each syllable with slow, measured precision. Her volume is hushed and intimate, never rising above a conversational murmur, while the intonation stays remarkably level and detached. This deliberate lack of vocal fluctuation emphasizes the stoic suppression of her inner turmoil, making the silence between words feel heavier than the speech itself.
             </td>
             <td style="text-align: center">
-            <audio controls="" style="width: 200px;"><source src="./Audio/EXP_ablation/sample-1/108.wav" type="audio/wav"></audio>
+            <audio controls="" style="width: 200px;"><source src="./Speech/Ablation/full_comfyvoice/153.wav" type="audio/wav"></audio>
+            </td>
+		</tr>
+
+     <tr>
+			<td style="text-align: center">
+            Real Domain
+            </td>
+			<td>
+			He owed mister Lawson, I can't tell you how.
+            </td>
+            <td>
+            Mature female voice, thick timbre, slow and gentle speech, flat and restrained tone, deep emotions.
+            </td>
+            <td style="text-align: center">
+            <audio controls="" style="width: 200px;"><source src="./Speech/Ablation/real_domain/153.wav" type="audio/wav"></audio>
+            </td>
+		</tr>
+
+     <tr>
+			<td style="text-align: center">
+            Original Prompt
+            </td>
+			<td>
+			He owed mister Lawson, I can't tell you how.
+            </td>
+            <td>
+            The furious speaker's voice was tranquil and unhurried, speaker's words softly spoken.
+            </td>
+            <td style="text-align: center">
+            <audio controls="" style="width: 200px;"><source src="./Speech/Ablation/original_prompt/153.wav" type="audio/wav"></audio>
             </td>
 		</tr>
 </tbody>
 </table>
-<p><ruby><strong>Style Description Inference Chain</strong></ruby></p>
+<p><ruby><strong>Module Ablation of Style Description Inference Chain</strong></ruby></p>
 <table>
 	<thead>
 		<tr>
 			<th style="text-align: center">Setting</th>
 			<th style="text-align: center">Text</th>
-			<!--th style="text-align: center">Style Prompt</th-->
+<!--			<th style="text-align: center">Style Description</th>-->
             <th style="text-align: center">Audio</th>
 		</tr>
 	</thead>
@@ -481,120 +440,60 @@
 
         <tr>
 			<td style="text-align: center">
-            Ab.1: w/o 𝐷𝑐 when generating 𝐶𝑒𝑥𝑡 : To verify whether
-			𝐷𝑐 contribute to emotional consistency and contextual
-			construction ability in 𝐶𝑒𝑥𝑡 .
+            -w/o Context-Extrapolator (C-E)
             </td>
 			<td>
-			I know that; but I cannot be mewed up here in the old house and deprived of my afternoon ride.
-
+			He owed mister Lawson, I can't tell you how.
             </td>
 
+
+
             <td style="text-align: center">
-            <audio controls="" style="width: 200px;"><source src="./Audio/EXP_ablation/sample-1/108-1.wav" type="audio/wav"></audio>
+            <audio controls="" style="width: 200px;"><source src="./Speech/Ablation/-wo_C-E/153.wav" type="audio/wav"></audio>
             </td>
 		</tr>
 
 		<tr>
 			<td style="text-align: center">
-            Ab.2: w/o 𝐷𝑐 when generating 𝐷𝑓 : Verify that 𝐷𝑐 provide
-			basic user intent when generating 𝐷𝑓 , preventing expressive bias.
+            Context-Extrapolator (C-E) -w/o DPO
             </td>
 			<td>
-			I know that; but I cannot be mewed up here in the old house and deprived of my afternoon ride.
-
+			He owed mister Lawson, I can't tell you how.
             </td>
 
-            <td style="text-align: center">
-            <audio controls="" style="width: 200px;"><source src="./Audio/EXP_ablation/sample-1/108-2.wav" type="audio/wav"></audio>
-            </td>
-		</tr>
-		<tr>
-			<td style="text-align: center">
-            Ab.3: w/o 𝐶𝑒𝑥𝑡 when generating 𝐷𝑓 : Verify whether 𝐶𝑒𝑥𝑡
-			can provide scenario support for 𝐷𝑓 to enhance naturalness
-			and context consistency.
-            </td>
-			<td>
-			I know that; but I cannot be mewed up here in the old house and deprived of my afternoon ride.
 
-            </td>
 
             <td style="text-align: center">
-            <audio controls="" style="width: 200px;"><source src="./Audio/EXP_ablation/sample-1/108-3.wav" type="audio/wav"></audio>
-            </td>
-		</tr>
-		<tr>
-			<td style="text-align: center">
-            Ab.4: w/o X and 𝐶𝑒𝑥𝑡 when generating 𝐷𝑓 : To measure
-			the degradation in expressiveness when 𝐷𝑓 is generated
-			solely based on 𝐷𝑐 .
-            </td>
-			<td>
-			I know that; but I cannot be mewed up here in the old house and deprived of my afternoon ride.
-
-            </td>
-
-            <td style="text-align: center">
-            <audio controls="" style="width: 200px;"><source src="./Audio/EXP_ablation/sample-1/108-4.wav" type="audio/wav"></audio>
+            <audio controls="" style="width: 200px;"><source src="./Speech/Ablation/C-E_-wo-DPO/153.wav" type="audio/wav"></audio>
             </td>
 		</tr>
 
-	</tbody>
-</table>
-<p><ruby><strong>Speech Synthesis with Different Input</strong></ruby></p>
-<table>
-	<thead>
-		<tr>
-			<th style="text-align: center">Setting</th>
-			<th style="text-align: center">Text</th>
-			<!--th style="text-align: center">Style Prompt</th-->
-            <th style="text-align: center">Audio</th>
-		</tr>
-	</thead>
-	<tbody>
         <tr>
 			<td style="text-align: center">
-            Ab.5: replacement of 𝐷𝑓 by 𝐷𝑐 when generation 𝑇𝑆 : To
-			directly compare the performance of using 𝐷𝑐 versus 𝐷𝑓
-			during speech synthesis.
+           -w/o Prompt-Enricher (P-E)
             </td>
 			<td>
-			I know that; but I cannot be mewed up here in the old house and deprived of my afternoon ride.
-
+			He owed mister Lawson, I can't tell you how.
             </td>
 
+
+
             <td style="text-align: center">
-            <audio controls="" style="width: 200px;"><source src="./Audio/EXP_ablation/sample-1/108-5.wav" type="audio/wav"></audio>
+            <audio controls="" style="width: 200px;"><source src="./Speech/Ablation/-wo_P-E/153.wav" type="audio/wav"></audio>
             </td>
 		</tr>
         <tr>
 			<td style="text-align: center">
-            Ab.6: only X and 𝐷𝑐 when generation 𝑇𝑆 : To assess the
-			performance of the system in the absence of both 𝐶𝑒𝑥𝑡 and 𝐷𝑓 .
+           -w/o Perceptual Resample (PR)
             </td>
 			<td>
-			I know that; but I cannot be mewed up here in the old house and deprived of my afternoon ride.
-
+			He owed mister Lawson, I can't tell you how.
             </td>
 
-            <td style="text-align: center">
-            <audio controls="" style="width: 200px;"><source src="./Audio/EXP_ablation/sample-1/108-6.wav" type="audio/wav"></audio>
-            </td>
-		</tr>
-		<tr>
-			<td style="text-align: center">
-            Ab.7: w/o 𝐶𝑒𝑥𝑡 when generation 𝑇𝑆 : To test whether
-			removing 𝐶𝑒𝑥𝑡 at the generation stage affects the
-			expressiveness and fidelity of synthesized speech.
-            </td>
-			<td>
-			I know that; but I cannot be mewed up here in the old house and deprived of my afternoon ride.
 
-            </td>
 
             <td style="text-align: center">
-            <audio controls="" style="width: 200px;"><source src="./Audio/EXP_ablation/sample-1/108-7.wav" type="audio/wav"></audio>
+            <audio controls="" style="width: 200px;"><source src="./Speech/Ablation/-wo_PR/153.wav" type="audio/wav"></audio>
             </td>
 		</tr>
 
@@ -604,127 +503,122 @@
 
 
 
+<h2 id="">Reward Design</h2>
 
-<h2 id="">Impact of the Extrapolated Context Window Size</h2>
-
-<p>To evaluate the impact of extrapolated context window size on style controllability and expressiveness, we vary the number of surrounding sentences 𝐾 ∈ {1, 2, 3, 4, 5} during speech generation.</p>
+<p>To evaluate the impact of reward on style controllability and expressiveness, we design different reward for GRPO during reinforcement learning.</p>
 
 <table>
     <thead>
         <tr>
             <th style="text-align: center">Text</th>
-            <th style="text-align: center">Context Window Size</th>
-            <th style="text-align: center">Fine-grained Description</th>
-            <th style="text-align: center">Audio</th>
+            <th style="text-align: center">Reward</th>
+            <th style="text-align: center">Refined Style Description</th>
+            <th style="text-align: center">Speech</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td rowspan="5" style="text-align: center">
-			    He couldn't but agree with me, but there was that wrathful Oriental with his face as fixed as a Buddha.
+			    One even gave my little dog a biscuit.
 			</td>
             <td style="text-align: center">
-                K=1
+                 SFT (w/o Reward)
             </td>
             <td rowspan="5" style="text-align: center">
-               Speaking with urgency, a lively young girl with a sharp and fiery tone talks quickly. Speaking at a rapid pace, she brims with fierce energy.
+               With a breathy, low-register timbre, the voice moves slowly, pausing frequently to simulate the effort of speaking while nauseated. The volume is consistently hushed, creating a sense of secrecy and exhaustion, while the pitch stays flat and unvaried, lacking enthusiasm. This soft, monotonous delivery emphasizes the speaker's subdued energy, rendering the simple act of feeding the dog as a poignant, quiet moment of relief.
 
             </td>
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-1/009-1.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/SFT/145.wav" type="audio/wav"></audio>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">
-                K=2
+                ASR Score Only
             </td>
 
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-1/009-2.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/ASR/145.wav" type="audio/wav"></audio>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">
-                K=3
+                CLSP Score Only
             </td>
 
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-1/009-3.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/CLSP/145.wav" type="audio/wav"></audio>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">
-                K=4
+                Even Weight Reward
             </td>
 
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-1/009-4.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/Static/145.wav" type="audio/wav"></audio>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">
-                K=5
+                Dynamic Reward
             </td>
 
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-1/009-5.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/Dynamic/145.wav" type="audio/wav"></audio>
             </td>
         </tr>
     </tbody>
 
-    <tbody>
+       <tbody>
         <tr>
             <td rowspan="5" style="text-align: center">
-            Why is it called by such a horrid name, Uncle?
-
+			    Aha what I have we here?
 			</td>
             <td style="text-align: center">
-                K=1
+                 SFT (w/o Reward)
             </td>
             <td rowspan="5" style="text-align: center">
-
-			   Speaking with curiosity, a high-pitched youth female with normal pitch and high volume asks. Speaking at a slow pace, she displays natural emotion.
+               A vibrant, youthful tone crackles with sudden realization, utilizing a high, piercing pitch that conveys pure astonishment. The delivery is brisk yet punctuated by deliberate pauses, allowing the wonder to build. Volume shifts from a hushed, secretive murmur to a bright, open projection, with crisp consonants and a rising inflection that perfectly encapsulates the thrill of uncovering long-lost secrets.
             </td>
-
-
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-2/235-1.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/SFT/196.wav" type="audio/wav"></audio>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">
-                K=2
+                ASR Score Only
             </td>
 
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-2/235-2.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/ASR/196.wav" type="audio/wav"></audio>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">
-                K=3
+                CLSP Score Only
             </td>
 
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-2/235-3.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/CLSP/196.wav" type="audio/wav"></audio>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">
-                K=4
+                Even Weight Reward
             </td>
 
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-2/235-4.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/Static/196.wav" type="audio/wav"></audio>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">
-                K=5
+                Dynamic Reward
             </td>
 
             <td style="text-align: center">
-                <audio controls="" style="width: 200px;"><source src="./Audio/EXP_context/sample-2/235-5.wav" type="audio/wav"></audio>
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_reward/Dynamic/196.wav" type="audio/wav"></audio>
             </td>
         </tr>
     </tbody>
@@ -735,13 +629,132 @@
 </table>
 
 
-<h2 id="references">References</h2>
+<h2 id="">Impact of the Context Length</h2>
 
-    <p>[1] <a>https://speechresearch.github.io/prompttts</a></p>
-    <p>[2] <a>https://www.text-description-to-speech.com/</a></p>
-    <p>[3] <a>https://voxinstruct.github.io/VoxInstruct/</a></p>
-    <p>[4] <a>https://funaudiollm.github.io/cosyvoice2/</a></p>
+<p>To evaluate the impact of extrapolated context length on style controllability and expressiveness, we vary the \(L_{0}\) ∈ {16, 32, 64, 96, 128} during speech generation.</p>
 
+<table>
+    <thead>
+        <tr>
+            <th style="text-align: center">Text</th>
+            <th style="text-align: center">Context Length</th>
+            <th style="text-align: center">Refined Style Description</th>
+            <th style="text-align: center">Speech</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="5" style="text-align: center">
+			    I think I've seen this before.
+			</td>
+            <td style="text-align: center">
+                 16
+            </td>
+            <td rowspan="5" style="text-align: center">
+               A mature voice with a steady, normal pitch and soft volume, delivered at a sluggish, relaxed speed. The emotional coloring is one of numb resignation, with a flat, monotone quality that suggests the speaker has lost all fight. The articulation is heavy, mirroring the physical sensation of being weighed down by nausea and despair.
+            </td>
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context16/051.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                32
+            </td>
+
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context32/051.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                64
+            </td>
+
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context64/051.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                96
+            </td>
+
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context96/051.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                128
+            </td>
+
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context128/051.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+    </tbody>
+    <tbody>
+        <tr>
+            <td rowspan="5" style="text-align: center">
+			    Why should I care though David's lips were twitching?
+			</td>
+            <td style="text-align: center">
+                 16
+            </td>
+            <td rowspan="5" style="text-align: center">
+               With a slow, staccato rhythm, a young female voice rises to a piercing, nasal register, conveying raw fury. The volume starts as a shaky whisper but explodes into a loud, trembling shout on the word "care," leaving a sharp, mocking echo in the air.
+            </td>
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context16/089.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                32
+            </td>
+
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context32/089.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                64
+            </td>
+
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context64/089.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                96
+            </td>
+
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context96/089.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                128
+            </td>
+
+            <td style="text-align: center">
+                <audio controls="" style="width: 200px;"><source src="./Speech/Ablation_length/context128/089.wav" type="audio/wav"></audio>
+            </td>
+        </tr>
+    </tbody>
+
+
+
+
+
+</table>
+
+
+<!--<h2 id="references">References</h2>-->
 
     <!-- End of Speech Demo -->
       <footer class="site-footer">
